@@ -5,6 +5,7 @@ import com.github.kfcfans.powerjob.common.OpenAPIConstant;
 import com.github.kfcfans.powerjob.common.PowerQuery;
 import com.github.kfcfans.powerjob.common.request.http.SaveWorkflowRequest;
 import com.github.kfcfans.powerjob.common.request.query.JobInfoQuery;
+import com.github.kfcfans.powerjob.common.utils.InstanceParamsUtils;
 import com.github.kfcfans.powerjob.server.service.AppInfoService;
 import com.github.kfcfans.powerjob.server.service.CacheService;
 import com.github.kfcfans.powerjob.server.service.JobService;
@@ -13,6 +14,7 @@ import com.github.kfcfans.powerjob.common.request.http.SaveJobInfoRequest;
 import com.github.kfcfans.powerjob.server.service.workflow.WorkflowInstanceService;
 import com.github.kfcfans.powerjob.server.service.workflow.WorkflowService;
 import com.github.kfcfans.powerjob.common.response.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -95,6 +97,9 @@ public class OpenAPIController {
     @PostMapping(OpenAPIConstant.RUN_JOB)
     public ResultDTO<Long> runJob(Long appId, Long jobId, @RequestParam(required = false) String instanceParams, @RequestParam(required = false) Long delay) {
         checkJobIdValid(jobId, appId);
+        if(StringUtils.isBlank(instanceParams)){
+            instanceParams = InstanceParamsUtils.getDefault(System.currentTimeMillis());
+        }
         return ResultDTO.success(jobService.runJob(appId, jobId, instanceParams, delay));
     }
 

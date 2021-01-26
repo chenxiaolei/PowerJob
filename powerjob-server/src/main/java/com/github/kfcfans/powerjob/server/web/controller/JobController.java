@@ -2,6 +2,7 @@ package com.github.kfcfans.powerjob.server.web.controller;
 
 import com.github.kfcfans.powerjob.common.request.http.SaveJobInfoRequest;
 import com.github.kfcfans.powerjob.common.response.ResultDTO;
+import com.github.kfcfans.powerjob.common.utils.InstanceParamsUtils;
 import com.github.kfcfans.powerjob.server.common.constans.SwitchableStatus;
 import com.github.kfcfans.powerjob.server.persistence.PageResult;
 import com.github.kfcfans.powerjob.server.persistence.core.model.JobInfoDO;
@@ -58,7 +59,7 @@ public class JobController {
 
     @GetMapping("/run")
     public ResultDTO<Long> runImmediately(String appId, String jobId) {
-        return ResultDTO.success(jobService.runJob(Long.valueOf(appId), Long.valueOf(jobId), null, 0L));
+        return ResultDTO.success(jobService.runJob(Long.valueOf(appId), Long.valueOf(jobId), InstanceParamsUtils.getDefault(System.currentTimeMillis()), 0L));
     }
 
     @PostMapping("/list")

@@ -133,6 +133,16 @@ under the License.
       <passphrase>optional; leave empty if not used.</passphrase>
     </server>
     -->
+    <server>
+      <id>kf-snapshots</id>
+      <username>admin</username>
+      <password>scttsc2018</password>
+    </server>
+    <server>
+      <id>kf-releases</id>
+      <username>admin</username>
+      <password>scttsc2018</password>
+    </server>
   </servers>
 
   <!-- mirrors

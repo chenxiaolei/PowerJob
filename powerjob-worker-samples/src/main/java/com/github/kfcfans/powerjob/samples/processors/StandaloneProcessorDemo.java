@@ -23,6 +23,7 @@ public class StandaloneProcessorDemo implements BasicProcessor {
     @Override
     public ProcessResult process(TaskContext context) throws Exception {
 
+        System.out.println("getInstanceParams: "+context.getInstanceParams());
         OmsLogger omsLogger = context.getOmsLogger();
         omsLogger.info("StandaloneProcessorDemo start process,context is {}.", context);
         omsLogger.info("Notice! If you want this job process failed, your jobParams need to be 'failed'");
