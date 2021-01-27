@@ -12,6 +12,7 @@ import com.github.kfcfans.powerjob.server.persistence.core.model.WorkflowInfoDO;
 import com.github.kfcfans.powerjob.server.utils.ParamsUtils;
 import com.github.kfcfans.powerjob.server.web.request.ParamsExpressionRequest;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.text.ParseException;
@@ -31,6 +32,9 @@ public class ValidateService {
 
 
     public static String calculateParamsExpression(ParamsExpressionRequest request) throws Exception {
+        if(StringUtils.isBlank(request.getParamsExpression())){
+            return "";
+        }
         long now = System.currentTimeMillis();
         IEvaluatedExpressionJob jobInfo;
         if (request.getIsWorkflowInfoInitParams()) {

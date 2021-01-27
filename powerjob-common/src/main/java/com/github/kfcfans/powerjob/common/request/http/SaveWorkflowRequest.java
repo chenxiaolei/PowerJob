@@ -31,6 +31,9 @@ public class SaveWorkflowRequest implements Serializable {
     // 点线表示法
     private PEWorkflowDAG pEWorkflowDAG;
 
+    // 默认的启动参数表达式
+    private String defaultInitParamsExpression;
+
     /* ************************** 定时参数 ************************** */
     // 时间表达式类型，仅支持 CRON 和 API
     private TimeExpressionType timeExpressionType;
