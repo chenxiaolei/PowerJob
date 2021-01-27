@@ -35,6 +35,8 @@ public class JobInfoVO {
     private Long appId;
     // 任务自带的参数
     private String jobParams;
+    // 默认的任务实例参数
+    private String defaultInstanceParamsExpression;
 
     /* ************************** 定时参数 ************************** */
     // 时间表达式类型（CRON/API/FIX_RATE/FIX_DELAY）

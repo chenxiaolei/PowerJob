@@ -13,6 +13,7 @@ import com.github.kfcfans.powerjob.server.common.utils.WorkflowDAGUtils;
 import com.github.kfcfans.powerjob.server.persistence.core.model.WorkflowInfoDO;
 import com.github.kfcfans.powerjob.server.persistence.core.repository.WorkflowInfoRepository;
 import com.github.kfcfans.powerjob.server.service.instance.InstanceTimeWheelService;
+import com.github.kfcfans.powerjob.server.utils.ParamsUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class WorkflowService {
 
     /**
      * 保存/修改DAG工作流
+     *
      * @param req 请求
      * @return 工作流ID
      * @throws Exception 异常
@@ -54,7 +56,7 @@ public class WorkflowService {
         if (wfId == null) {
             wf = new WorkflowInfoDO();
             wf.setGmtCreate(new Date());
-        }else {
+        } else {
             wf = workflowInfoRepository.findById(wfId).orElseThrow(() -> new IllegalArgumentException("can't find workflow by id:" + wfId));
         }
 
@@ -73,7 +75,7 @@ public class WorkflowService {
             CronExpression cronExpression = new CronExpression(req.getTimeExpression());
             Date nextValidTime = cronExpression.getNextValidTimeAfter(new Date());
             wf.setNextTriggerTime(nextValidTime.getTime());
-        }else {
+        } else {
             wf.setTimeExpression(null);
         }
 
@@ -83,7 +85,8 @@ public class WorkflowService {
 
     /**
      * 获取工作流元信息
-     * @param wfId 工作流ID
+     *
+     * @param wfId  工作流ID
      * @param appId 应用ID
      * @return 对外输出对象
      */
@@ -96,7 +99,8 @@ public class WorkflowService {
 
     /**
      * 删除工作流（软删除）
-     * @param wfId 工作流ID
+     *
+     * @param wfId  工作流ID
      * @param appId 所属应用ID
      */
     public void deleteWorkflow(Long wfId, Long appId) {
@@ -108,7 +112,8 @@ public class WorkflowService {
 
     /**
      * 禁用工作流
-     * @param wfId 工作流ID
+     *
+     * @param wfId  工作流ID
      * @param appId 所属应用ID
      */
     public void disableWorkflow(Long wfId, Long appId) {
@@ -120,7 +125,8 @@ public class WorkflowService {
 
     /**
      * 启用工作流
-     * @param wfId 工作流ID
+     *
+     * @param wfId  工作流ID
      * @param appId 所属应用ID
      */
     public void enableWorkflow(Long wfId, Long appId) {
@@ -132,10 +138,11 @@ public class WorkflowService {
 
     /**
      * 立即运行工作流
-     * @param wfId 工作流ID
-     * @param appId 所属应用ID
+     *
+     * @param wfId       工作流ID
+     * @param appId      所属应用ID
      * @param initParams 启动参数
-     * @param delay 延迟时间
+     * @param delay      延迟时间
      * @return 该 workflow 实例的 instanceId（wfInstanceId）
      */
     @DesignateServer(appIdParameterName = "appId")
@@ -144,12 +151,14 @@ public class WorkflowService {
         delay = delay == null ? 0 : delay;
         WorkflowInfoDO wfInfo = permissionCheck(wfId, appId);
 
-        log.info("[WorkflowService-{}] try to run workflow, initParams={},delay={} ms.", wfInfo.getId(), initParams, delay);
-        Long wfInstanceId = workflowInstanceManager.create(wfInfo, initParams, System.currentTimeMillis() + delay);
+        String finalInitParams = ParamsUtils.evalIfNull(initParams, wfInfo);
+
+        log.info("[WorkflowService-{}] try to run workflow, initParams={},delay={} ms.", wfInfo.getId(), finalInitParams, delay);
+        Long wfInstanceId = workflowInstanceManager.create(wfInfo, finalInitParams, System.currentTimeMillis() + delay);
         if (delay <= 0) {
-            workflowInstanceManager.start(wfInfo, wfInstanceId, initParams);
-        }else {
-            InstanceTimeWheelService.schedule(wfInstanceId, delay, () -> workflowInstanceManager.start(wfInfo, wfInstanceId, initParams));
+            workflowInstanceManager.start(wfInfo, wfInstanceId, finalInitParams);
+        } else {
+            InstanceTimeWheelService.schedule(wfInstanceId, delay, () -> workflowInstanceManager.start(wfInfo, wfInstanceId, finalInitParams));
         }
         return wfInstanceId;
     }

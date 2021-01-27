@@ -41,6 +41,9 @@ public class SaveJobInfoRequest {
      */
     private String jobParams;
 
+    // 默认的任务实例参数表达式
+    private String defaultInstanceParamsExpression;
+
     /* ************************** Timing param. ************************** */
     /**
      * Time expression type.

@@ -1,6 +1,7 @@
 package com.github.kfcfans.powerjob.server.persistence.core.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -18,8 +19,9 @@ import java.util.Date;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(indexes = {@Index(columnList = "appId")})
-public class WorkflowInfoDO {
+public class WorkflowInfoDO  implements IEvaluatedExpressionJob {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -36,6 +38,9 @@ public class WorkflowInfoDO {
     @Lob
     @Column
     private String peDAG;
+
+    // 默认的启动参数表达式
+    private String defaultInitParamsExpression;
 
     /* ************************** 定时参数 ************************** */
     // 时间表达式类型（CRON/API/FIX_RATE/FIX_DELAY）
@@ -56,4 +61,10 @@ public class WorkflowInfoDO {
 
     private Date gmtCreate;
     private Date gmtModified;
+
+    @Transient
+    @Override
+    public String getEvaluatedExpression() {
+        return defaultInitParamsExpression;
+    }
 }

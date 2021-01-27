@@ -2,6 +2,7 @@ package com.github.kfcfans.powerjob.server.persistence.core.model;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -19,8 +20,9 @@ import java.util.Date;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(indexes = {@Index(columnList = "appId")})
-public class JobInfoDO {
+public class JobInfoDO implements IEvaluatedExpressionJob {
 
 
     @Id
@@ -37,6 +39,9 @@ public class JobInfoDO {
     private Long appId;
     // 任务自带的参数
     private String jobParams;
+
+    // 默认的实例参数表达式
+    private String defaultInstanceParamsExpression;
 
     /* ************************** 定时参数 ************************** */
     // 时间表达式类型（CRON/API/FIX_RATE/FIX_DELAY）
@@ -91,4 +96,9 @@ public class JobInfoDO {
     private Date gmtCreate;
     private Date gmtModified;
 
+    @Transient
+    @Override
+    public String getEvaluatedExpression() {
+        return defaultInstanceParamsExpression;
+    }
 }

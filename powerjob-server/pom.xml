@@ -31,13 +31,24 @@
         <commons.net.version>3.6</commons.net.version>
         <fastjson.version>1.2.68</fastjson.version>
         <dingding.version>1.0.1</dingding.version>
+        <enjoy.version>4.9.06</enjoy.version>
 
+        <hutool.version>5.5.4</hutool.version>
         <!-- Skip this module when deploying. -->
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.30</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-extra</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
         <!-- oms-common -->
         <dependency>
             <groupId>com.github.kfcfans</groupId>

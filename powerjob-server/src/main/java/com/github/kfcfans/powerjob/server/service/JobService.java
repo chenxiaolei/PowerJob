@@ -17,6 +17,7 @@ import com.github.kfcfans.powerjob.server.persistence.core.repository.InstanceIn
 import com.github.kfcfans.powerjob.server.persistence.core.repository.JobInfoRepository;
 import com.github.kfcfans.powerjob.server.service.instance.InstanceService;
 import com.github.kfcfans.powerjob.server.service.instance.InstanceTimeWheelService;
+import com.github.kfcfans.powerjob.server.utils.ParamsUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
@@ -52,6 +53,7 @@ public class JobService {
 
     /**
      * 保存/修改任务
+     *
      * @param request 任务请求
      * @return 创建的任务ID（jobId）
      * @throws Exception 异常
@@ -63,7 +65,7 @@ public class JobService {
         JobInfoDO jobInfoDO;
         if (request.getId() != null) {
             jobInfoDO = jobInfoRepository.findById(request.getId()).orElseThrow(() -> new IllegalArgumentException("can't find job by jobId: " + request.getId()));
-        }else {
+        } else {
             jobInfoDO = new JobInfoDO();
         }
 
@@ -107,9 +109,10 @@ public class JobService {
 
     /**
      * 手动立即运行某个任务
-     * @param jobId 任务ID
+     *
+     * @param jobId          任务ID
      * @param instanceParams 任务实例参数（仅 OpenAPI 存在）
-     * @param delay 延迟时间，单位 毫秒
+     * @param delay          延迟时间，单位 毫秒
      * @return 任务实例ID
      */
     @DesignateServer(appIdParameterName = "appId")
@@ -118,23 +121,26 @@ public class JobService {
         delay = delay == null ? 0 : delay;
         JobInfoDO jobInfo = jobInfoRepository.findById(jobId).orElseThrow(() -> new IllegalArgumentException("can't find job by id:" + jobId));
 
-        log.info("[Job-{}] try to run job in app[{}], instanceParams={},delay={} ms.", jobInfo.getId(), appId, instanceParams, delay);
-        Long instanceId = instanceService.create(jobInfo.getId(), jobInfo.getAppId(), instanceParams, null, System.currentTimeMillis() + Math.max(delay, 0));
+        String finalInstanceParams = ParamsUtils.evalIfNull(instanceParams, jobInfo);
+
+        log.info("[Job-{}] try to run job in app[{}], instanceParams={},delay={} ms.", jobInfo.getId(), appId, finalInstanceParams, delay);
+        Long instanceId = instanceService.create(jobInfo.getId(), jobInfo.getAppId(), finalInstanceParams, null, System.currentTimeMillis() + Math.max(delay, 0));
         instanceInfoRepository.flush();
         if (delay <= 0) {
-            dispatchService.dispatch(jobInfo, instanceId, 0, instanceParams, null);
-        }else {
+            dispatchService.dispatch(jobInfo, instanceId, 0, finalInstanceParams, null);
+        } else {
             InstanceTimeWheelService.schedule(instanceId, delay, () -> {
-                dispatchService.dispatch(jobInfo, instanceId, 0, instanceParams, null);
+                dispatchService.dispatch(jobInfo, instanceId, 0, finalInstanceParams, null);
             });
         }
-        log.info("[Job-{}] run job successfully, params={}, instanceId={}", jobInfo.getId(), instanceParams, instanceId);
+        log.info("[Job-{}] run job successfully, params={}, instanceId={}", jobInfo.getId(), finalInstanceParams, instanceId);
         return instanceId;
     }
 
 
     /**
      * 删除某个任务
+     *
      * @param jobId 任务ID
      */
     public void deleteJob(Long jobId) {
@@ -150,6 +156,7 @@ public class JobService {
 
     /**
      * 启用某个任务
+     *
      * @param jobId 任务ID
      * @throws Exception 异常（CRON表达式错误）
      */
@@ -193,7 +200,7 @@ public class JobService {
             try {
                 // 重复查询了数据库，不过问题不大，这个调用量很小
                 instanceService.stopInstance(instance.getInstanceId());
-            }catch (Exception ignore) {
+            } catch (Exception ignore) {
             }
         });
     }
@@ -210,7 +217,7 @@ public class JobService {
                 throw new PowerJobException("cron expression is out of date: " + jobInfoDO.getTimeExpression());
             }
             jobInfoDO.setNextTriggerTime(nextValidTime.getTime());
-        }else if (timeExpressionType == TimeExpressionType.API || timeExpressionType == TimeExpressionType.WORKFLOW) {
+        } else if (timeExpressionType == TimeExpressionType.API || timeExpressionType == TimeExpressionType.WORKFLOW) {
             jobInfoDO.setTimeExpression(null);
         }
         // 重写最后修改时间

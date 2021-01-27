@@ -2,7 +2,7 @@ package com.github.kfcfans.powerjob.server.service.timing.schedule;
 
 import com.github.kfcfans.powerjob.common.InstanceStatus;
 import com.github.kfcfans.powerjob.common.TimeExpressionType;
-import com.github.kfcfans.powerjob.common.utils.InstanceParamsUtils;
+import com.github.kfcfans.powerjob.server.utils.ParamsUtils;
 import com.github.kfcfans.powerjob.server.akka.OhMyServer;
 import com.github.kfcfans.powerjob.server.common.constans.SwitchableStatus;
 import com.github.kfcfans.powerjob.server.common.utils.CronExpression;
@@ -137,7 +137,7 @@ public class OmsScheduleService {
                 log.info("[CronScheduler] These cron jobs will be scheduled: {}.", jobInfos);
 
                 jobInfos.forEach(jobInfo -> {
-                    Long instanceId = instanceService.create(jobInfo.getId(), jobInfo.getAppId(),  InstanceParamsUtils.getDefault(jobInfo.getNextTriggerTime()), null, jobInfo.getNextTriggerTime());
+                    Long instanceId = instanceService.create(jobInfo.getId(), jobInfo.getAppId(),  ParamsUtils.eval(jobInfo), null, jobInfo.getNextTriggerTime());
                     jobId2InstanceId.put(jobInfo.getId(), instanceId);
                 });
                 instanceInfoRepository.flush();
@@ -156,7 +156,7 @@ public class OmsScheduleService {
                     }
 
                     InstanceTimeWheelService.schedule(instanceId, delay, () -> {
-                        dispatchService.dispatch(jobInfoDO, instanceId, 0,  InstanceParamsUtils.getDefault(targetTriggerTime), null);
+                        dispatchService.dispatch(jobInfoDO, instanceId, 0,  ParamsUtils.eval(jobInfoDO), null);
                     });
                 });
 
@@ -189,7 +189,7 @@ public class OmsScheduleService {
             }
 
             wfInfos.forEach(wfInfo -> {
-                String defaultInitParams = InstanceParamsUtils.getDefault(wfInfo.getNextTriggerTime());
+                String defaultInitParams = ParamsUtils.eval(wfInfo);
                 // 1. 先生成调度记录，防止不调度的情况发生
                 Long wfInstanceId = workflowInstanceManager.create(wfInfo, defaultInitParams, wfInfo.getNextTriggerTime());
 
@@ -214,7 +214,7 @@ public class OmsScheduleService {
     }
 
     private void scheduleFrequentJob(List<Long> appIds) {
-        String defaultInstanceParams = InstanceParamsUtils.getDefault(System.currentTimeMillis());
+
 
         Lists.partition(appIds, MAX_APP_NUM).forEach(partAppIds -> {
             try {
@@ -241,7 +241,7 @@ public class OmsScheduleService {
                 log.info("[FrequentScheduler] These frequent jobs will be scheduled： {}.", notRunningJobIds);
                 notRunningJobIds.forEach(jobId -> {
                     Optional<JobInfoDO> jobInfoOpt = jobInfoRepository.findById(jobId);
-                    jobInfoOpt.ifPresent(jobInfoDO -> jobService.runJob(jobInfoDO.getAppId(), jobId, defaultInstanceParams, 0L));
+                    jobInfoOpt.ifPresent(jobInfoDO -> jobService.runJob(jobInfoDO.getAppId(), jobId, ParamsUtils.eval(jobInfoDO), 0L));
                 });
             } catch (Exception e) {
                 log.error("[FrequentScheduler] schedule frequent job failed.", e);

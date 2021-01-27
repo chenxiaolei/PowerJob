@@ -2,7 +2,6 @@ package com.github.kfcfans.powerjob.server.web.controller;
 
 import com.github.kfcfans.powerjob.common.request.http.SaveWorkflowRequest;
 import com.github.kfcfans.powerjob.common.response.ResultDTO;
-import com.github.kfcfans.powerjob.common.utils.InstanceParamsUtils;
 import com.github.kfcfans.powerjob.server.common.constans.SwitchableStatus;
 import com.github.kfcfans.powerjob.server.persistence.PageResult;
 import com.github.kfcfans.powerjob.server.persistence.core.model.WorkflowInfoDO;
@@ -80,7 +79,7 @@ public class WorkflowController {
 
     @GetMapping("/run")
     public ResultDTO<Long> runWorkflow(Long workflowId, Long appId) {
-        return ResultDTO.success(workflowService.runWorkflow(workflowId, appId, InstanceParamsUtils.getDefault(System.currentTimeMillis()), 0L));
+        return ResultDTO.success(workflowService.runWorkflow(workflowId, appId, null, 0L));
     }
 
     private static PageResult<WorkflowInfoVO> convertPage(Page<WorkflowInfoDO> originPage) {
