@@ -121,7 +121,7 @@ public class JobService {
         delay = delay == null ? 0 : delay;
         JobInfoDO jobInfo = jobInfoRepository.findById(jobId).orElseThrow(() -> new IllegalArgumentException("can't find job by id:" + jobId));
 
-        String finalInstanceParams = ParamsUtils.evalIfNull(instanceParams, jobInfo);
+        String finalInstanceParams = ParamsUtils.evalIfNull(instanceParams, jobInfo, null);
 
         log.info("[Job-{}] try to run job in app[{}], instanceParams={},delay={} ms.", jobInfo.getId(), appId, finalInstanceParams, delay);
         Long instanceId = instanceService.create(jobInfo.getId(), jobInfo.getAppId(), finalInstanceParams, null, System.currentTimeMillis() + Math.max(delay, 0));
@@ -152,6 +152,22 @@ public class JobService {
      */
     public void disableJob(Long jobId) {
         shutdownOrStopJob(jobId, SwitchableStatus.DISABLE);
+    }
+
+    /**
+     * 复制某个任务
+     *
+     * @param jobId 任务ID
+     */
+    public void duplicateJob(Long jobId) throws Exception {
+        JobInfoDO jobInfo = jobInfoRepository.findById(jobId).orElseThrow(() -> new IllegalArgumentException("can't find job by id:" + jobId));
+        jobInfo.setId(null);
+        jobInfo.setJobName(jobInfo.getJobName()+"-副本");
+
+        calculateNextTriggerTime(jobInfo);
+        jobInfo.setGmtCreate(new Date());
+
+        jobInfoRepository.saveAndFlush(jobInfo);
     }
 
     /**

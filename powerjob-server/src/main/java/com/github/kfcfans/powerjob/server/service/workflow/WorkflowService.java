@@ -151,7 +151,7 @@ public class WorkflowService {
         delay = delay == null ? 0 : delay;
         WorkflowInfoDO wfInfo = permissionCheck(wfId, appId);
 
-        String finalInitParams = ParamsUtils.evalIfNull(initParams, wfInfo);
+        String finalInitParams = ParamsUtils.evalIfNull(initParams, wfInfo, null);
 
         log.info("[WorkflowService-{}] try to run workflow, initParams={},delay={} ms.", wfInfo.getId(), finalInitParams, delay);
         Long wfInstanceId = workflowInstanceManager.create(wfInfo, finalInitParams, System.currentTimeMillis() + delay);

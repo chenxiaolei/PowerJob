@@ -32,15 +32,14 @@ public class ParamsUtils {
     }
 
     public static String eval(IEvaluatedExpressionJob jobInfo) {
-        return evalIfNull(null, jobInfo);
+        return evalIfNull(null, jobInfo, jobInfo.getNextTriggerTime());
     }
 
-    public static String evalIfNull(String params, IEvaluatedExpressionJob jobInfo) {
+    public static String evalIfNull(String params, IEvaluatedExpressionJob jobInfo, Long instanceFirstTriggerTime) {
         if (StringUtils.isNotBlank(params)) {
             return params;
         }
-        long triggerTime = jobInfo.getNextTriggerTime() != null ? jobInfo.getNextTriggerTime() : System.currentTimeMillis();
-
+        long triggerTime = instanceFirstTriggerTime != null ? instanceFirstTriggerTime : System.currentTimeMillis();
         if (StringUtils.isBlank(jobInfo.getEvaluatedExpression())) {
             //如果没有 给个实例首次触发时间
             Map<String, Object> defaultInstanceParams = new HashMap<>();

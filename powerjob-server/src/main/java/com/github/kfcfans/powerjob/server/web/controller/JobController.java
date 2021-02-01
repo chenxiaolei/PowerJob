@@ -56,6 +56,13 @@ public class JobController {
         return ResultDTO.success(null);
     }
 
+    @GetMapping("/duplicate")
+    public ResultDTO<Void> duplicateJob(String jobId) throws Exception {
+        jobService.duplicateJob(Long.valueOf(jobId));
+        return ResultDTO.success(null);
+    }
+
+
     @GetMapping("/run")
     public ResultDTO<Long> runImmediately(String appId, String jobId) {
         return ResultDTO.success(jobService.runJob(Long.valueOf(appId), Long.valueOf(jobId), null, 0L));
