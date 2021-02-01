@@ -27,9 +27,9 @@ if [ "$rebuild" = "y" ] || [  "$rebuild" = "Y" ]; then
 
   read -r -p "是否正式发布该镜像（y/n）:" needrelease
   if [ "$needrelease" = "y" ] || [  "$needrelease" = "Y" ]; then
-    read -r -p "三思！请确保当前处于已发布的Master分支！（y/n）:" needrelease
+    read -r -p "三思！请确保当前处于已发布的kf分支！（y/n）:" needrelease
     if [ "$needrelease" = "y" ] || [  "$needrelease" = "Y" ]; then
-      echo "================== 正在推送 server 镜像到中央仓库 =================="
+      echo "================== 正在推送 server 镜像到KF私有仓库 =================="
       docker push nexus.docker.kefen.site:7300/kefen/powerjob-server:$version
     fi
   fi
