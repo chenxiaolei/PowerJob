@@ -79,6 +79,7 @@ public class InstanceService {
 
         newInstanceInfo.setStatus(InstanceStatus.WAITING_DISPATCH.getV());
         newInstanceInfo.setExpectedTriggerTime(expectTriggerTime);
+        newInstanceInfo.setFirstTriggerTime(expectTriggerTime);
         newInstanceInfo.setLastReportTime(-1L);
         newInstanceInfo.setGmtCreate(now);
         newInstanceInfo.setGmtModified(now);

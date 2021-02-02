@@ -59,6 +59,7 @@ CREATE TABLE `instance_info` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `actual_trigger_time` bigint DEFAULT NULL,
   `app_id` bigint DEFAULT NULL,
+  `first_trigger_time` bigint DEFAULT NULL,
   `expected_trigger_time` bigint DEFAULT NULL,
   `finished_time` bigint DEFAULT NULL,
   `gmt_create` datetime(6) DEFAULT NULL,

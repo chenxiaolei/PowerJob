@@ -54,6 +54,9 @@ public class InstanceInfoDO {
     private Long expectedTriggerTime;
     // 实际触发时间
     private Long actualTriggerTime;
+
+    // 首次触发时间
+    private Long firstTriggerTime;
     // 结束时间
     private Long finishedTime;
     // 最后上报时间

@@ -40,6 +40,9 @@ public class InstanceInfoVO {
     // 结束时间（同理，需要格式化）
     private String finishedTime;
 
+    // 首次触发时间（需要格式化为人看得懂的时间）
+    private String firstTriggerTime;
+
     public static InstanceInfoVO from(InstanceInfoDO instanceInfoDo, String jobName) {
         InstanceInfoVO instanceInfoVO = new InstanceInfoVO();
         BeanUtils.copyProperties(instanceInfoDo, instanceInfoVO);
@@ -66,6 +69,11 @@ public class InstanceInfoVO {
             instanceInfoVO.setFinishedTime(OmsConstant.NONE);
         }else {
             instanceInfoVO.setFinishedTime(DateFormatUtils.format(instanceInfoDo.getFinishedTime(), OmsConstant.TIME_PATTERN));
+        }
+        if (instanceInfoDo.getFirstTriggerTime() == null) {
+            instanceInfoVO.setFirstTriggerTime(OmsConstant.NONE);
+        }else {
+            instanceInfoVO.setFirstTriggerTime(DateFormatUtils.format(instanceInfoDo.getFirstTriggerTime(), OmsConstant.TIME_PATTERN));
         }
 
         return instanceInfoVO;
