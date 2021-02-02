@@ -163,6 +163,8 @@ public class JobService {
         JobInfoDO jobInfo = jobInfoRepository.findById(jobId).orElseThrow(() -> new IllegalArgumentException("can't find job by id:" + jobId));
         jobInfo.setId(null);
         jobInfo.setJobName(jobInfo.getJobName()+"-副本");
+        //复制的副本默认不开启立即调度
+        jobInfo.setStatus(SwitchableStatus.DISABLE.getV());
 
         calculateNextTriggerTime(jobInfo);
         jobInfo.setGmtCreate(new Date());
