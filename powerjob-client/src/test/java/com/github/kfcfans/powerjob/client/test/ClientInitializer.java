@@ -15,6 +15,6 @@ public class ClientInitializer {
 
     @BeforeAll
     public static void initClient() throws Exception {
-        ohMyClient = new OhMyClient("127.0.0.1:7700", "powerjob-agent-test", "123");
+        ohMyClient = new OhMyClient("127.0.0.1:7700", "tower3in1", "tower3in1123");
     }
 }

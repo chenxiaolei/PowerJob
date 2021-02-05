@@ -1,10 +1,12 @@
 package com.github.kfcfans.powerjob.client.test;
 
 import com.alibaba.fastjson.JSON;
-import com.github.kfcfans.powerjob.common.request.query.JobInfoQuery;
 import com.github.kfcfans.powerjob.common.ExecuteType;
+import com.github.kfcfans.powerjob.common.InstanceStatus;
 import com.github.kfcfans.powerjob.common.ProcessorType;
-import com.github.kfcfans.powerjob.common.TimeExpressionType;
+import com.github.kfcfans.powerjob.common.request.query.InstanceInfoQuery;
+import com.github.kfcfans.powerjob.common.request.query.JobInfoQuery;
+import com.github.kfcfans.powerjob.common.response.InstanceInfoDTO;
 import com.github.kfcfans.powerjob.common.response.JobInfoDTO;
 import com.github.kfcfans.powerjob.common.response.ResultDTO;
 import com.google.common.collect.Lists;
@@ -45,5 +47,16 @@ class TestQuery extends ClientInitializer {
         ResultDTO<List<JobInfoDTO>> jobQueryResult = ohMyClient.queryJob(jobInfoQuery);
         System.out.println(JSON.toJSONString(jobQueryResult));
         System.out.println(jobQueryResult.getData().size());
+    }
+
+    @Test
+    void testQueryInstance() {
+        InstanceInfoQuery jobInfoQuery = new InstanceInfoQuery()
+               .setStatusIn(Lists.newArrayList(InstanceStatus.FAILED.getV()));
+
+        ResultDTO<List<InstanceInfoDTO>> instanceQueryResult = ohMyClient.queryInstance(jobInfoQuery);
+
+        System.out.println(JSON.toJSONString(instanceQueryResult));
+        System.out.println(instanceQueryResult.getData().size());
     }
 }
