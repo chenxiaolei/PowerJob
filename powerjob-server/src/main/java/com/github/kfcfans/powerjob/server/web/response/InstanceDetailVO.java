@@ -21,7 +21,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class InstanceDetailVO {
-
+    // 任务首次执行时间
+    private String firstTriggerTime;
     // 任务预计执行时间
     private String expectedTriggerTime;
     // 任务整体开始时间

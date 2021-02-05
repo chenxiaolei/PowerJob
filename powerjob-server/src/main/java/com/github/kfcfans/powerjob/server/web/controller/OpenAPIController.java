@@ -2,9 +2,9 @@ package com.github.kfcfans.powerjob.server.web.controller;
 
 import com.github.kfcfans.powerjob.common.InstanceStatus;
 import com.github.kfcfans.powerjob.common.OpenAPIConstant;
-import com.github.kfcfans.powerjob.common.PowerQuery;
 import com.github.kfcfans.powerjob.common.request.http.SaveJobInfoRequest;
 import com.github.kfcfans.powerjob.common.request.http.SaveWorkflowRequest;
+import com.github.kfcfans.powerjob.common.request.query.InstanceInfoQuery;
 import com.github.kfcfans.powerjob.common.request.query.JobInfoQuery;
 import com.github.kfcfans.powerjob.common.response.*;
 import com.github.kfcfans.powerjob.server.service.AppInfoService;
@@ -38,7 +38,6 @@ public class OpenAPIController {
     private WorkflowService workflowService;
     @Resource
     private WorkflowInstanceService workflowInstanceService;
-
     @Resource
     private CacheService cacheService;
 
@@ -133,7 +132,7 @@ public class OpenAPIController {
     }
 
     @PostMapping(OpenAPIConstant.QUERY_INSTANCE)
-    public ResultDTO<List<InstanceInfoDTO>> queryInstance(@RequestBody PowerQuery powerQuery) {
+    public ResultDTO<List<InstanceInfoDTO>> queryInstance(@RequestBody InstanceInfoQuery powerQuery) {
         return ResultDTO.success(instanceService.queryInstanceInfo(powerQuery));
     }
 
