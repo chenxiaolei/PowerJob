@@ -44,6 +44,9 @@ public class JobInstanceAlarm implements Alarm {
     // TaskTracker地址
     private String taskTrackerAddress;
 
+    // 总共执行的次数（用于重试判断）
+    private Long runningTimes;
+
     @Override
     public String fetchTitle() {
         return "PowerJob AlarmService: Job Running Failed";

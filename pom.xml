@@ -6,7 +6,7 @@
 
     <groupId>com.github.kfcfans</groupId>
     <artifactId>powerjob</artifactId>
-    <version>3.4.5.kf20210205</version>
+    <version>3.4.5.kf20210301</version>
     <packaging>pom</packaging>
     <name>powerjob</name>
     <url>http://www.powerjob.tech</url>
